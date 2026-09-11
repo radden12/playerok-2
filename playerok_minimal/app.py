@@ -31,6 +31,24 @@ class App:
         self._register_core_handlers()
         self.plugins.load_all()
 
+    def _configure_menu(self) -> None:
+        commands = [
+            types.BotCommand("menu", "Главное меню"),
+            types.BotCommand("plugins", "Управление плагинами"),
+            types.BotCommand("playerok", "Подключение Playerok"),
+            types.BotCommand("cancel", "Отменить ввод и открыть меню"),
+            types.BotCommand("start", "Открыть панель управления"),
+        ]
+        self.bot.set_my_commands(commands)
+        self.bot.set_chat_menu_button(menu_button=types.MenuButtonCommands())
+        # Override any previously configured menu for the owner's private chat.
+        self.bot.set_my_commands(
+            commands, scope=types.BotCommandScopeChat(self.core.admin_id),
+        )
+        self.bot.set_chat_menu_button(
+            chat_id=self.core.admin_id, menu_button=types.MenuButtonCommands(),
+        )
+
     def _home_keyboard(self) -> types.InlineKeyboardMarkup:
         keyboard = types.InlineKeyboardMarkup(row_width=1)
         for index, info in enumerate(self._plugin_rows()):
@@ -227,7 +245,9 @@ class App:
             self._playerok_screen(message.chat.id)
 
     def _register_core_handlers(self) -> None:
-        @self.bot.message_handler(commands=["start"])
+        # Register navigation before input handlers so commands cannot be read
+        # as Cookie values while the connection wizard is active.
+        @self.bot.message_handler(commands=["start", "menu", "cancel"])
         def start(message: Any) -> None:
             sender_id = int(getattr(message.from_user, "id", 0) or 0)
             log.info("Получен /start: telegram_id=%s, ADMIN_ID=%s", sender_id, self.core.admin_id)
@@ -240,6 +260,17 @@ class App:
                 "Ваш Telegram ID: <code>" + str(sender_id) + "</code>\n"
                 "Укажите именно его в переменной <code>ADMIN_ID</code> на Bothost.",
             )
+
+        @self.bot.message_handler(commands=["plugins", "playerok"])
+        def navigate(message: Any) -> None:
+            if not self.core.is_admin(message.from_user.id):
+                return
+            self.core.clear_state(message.chat.id)
+            command = str(message.text or "").split()[0].split("@", 1)[0]
+            if command == "/plugins":
+                self._plugins_screen(message.chat.id)
+            else:
+                self._playerok_screen(message.chat.id)
 
         @self.bot.callback_query_handler(
             func=lambda call: str(getattr(call, "data", "")).startswith(("home:", "pm:", "cfg:"))
@@ -437,6 +468,10 @@ class App:
         except Exception:
             log.exception("Не удалось подключиться к Telegram. Проверьте BOT_TOKEN и доступ Bothost к Telegram")
             raise
+        try:
+            self._configure_menu()
+        except Exception:
+            log.exception("Не удалось настроить кнопку Меню. Команды /menu и /cancel доступны вручную")
         self.bot.infinity_polling(skip_pending=True, timeout=30, long_polling_timeout=30)
 
 
