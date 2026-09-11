@@ -1,0 +1,5 @@
+pyTelegramBotAPI==4.28.0
+requests==2.32.3
+Pillow==11.3.0
+tqdm==4.67.1
+https://github.com/alleexxeeyy/PlayerokAPI/archive/e2084a382081a584d24abb96cc1a64e5cb79a860.zip

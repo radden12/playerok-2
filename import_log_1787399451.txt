@@ -1,0 +1,11 @@
+Журнал импорта GEngine_Playerok_KeysCards - 2026-08-22 11:50 UTC
+============================================================
+
+[ERR] 2026-08-22 11:45 UTC | игра: Steam Wallet Code Philippines | номинал: 100 PHP |  | ОШИБКА: Playerok create_item: Один или более атрибутов товара имеют некорректные значения
+[ERR] 2026-08-22 11:45 UTC | игра: Steam Wallet Code Philippines | номинал: 250 PHP |  | ОШИБКА: Playerok create_item: Один или более атрибутов товара имеют некорректные значения
+[ERR] 2026-08-22 11:47 UTC | игра: Steam Wallet Code Philippines | номинал: 500 PHP |  | ОШИБКА: Playerok create_item: Один или более атрибутов товара имеют некорректные значения
+[ERR] 2026-08-22 11:47 UTC | игра: Steam Wallet Code Philippines | номинал: 800 PHP |  | ОШИБКА: Playerok create_item: Один или более атрибутов товара имеют некорректные значения
+[ERR] 2026-08-22 11:49 UTC | игра: Steam Wallet Code Philippines | номинал: 1000 PHP |  | ОШИБКА: Playerok create_item: create_item (с характеристиками): импорт остановлен во время ожидания повтора
+
+============================================================
+Всего записей: 5, из них ошибок: 5
